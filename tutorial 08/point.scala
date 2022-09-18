@@ -1,37 +1,41 @@
+import scala.collection.mutable.Map
+
 object Main extends App{
 
-  case class Point(a:Int, b:Int){
+  case class Point(point: Map[Char, Int]){
 
-    private var x:Int = a
-    private var y:Int = b
+    require(point.contains('x') && point.contains('y'), "Please enter valid point")
 
-    def add(p:Point):Point = Point(p.x + this.x, p.y + this.y)
+    def +(that: Point):Point = Point(Map('x' -> (this.point('x') + that.point('x')), 'y' -> (this.point('y') + that.point('y'))))
 
-    def move(n:Int, m:Int):Point = {
-      // because case class immutable
-      var p:Point = Point(x+n, y+m)
-      return p
+    def move(a:Int, b:Int):Point = {
+      this.point('x') = this.point('x') + a
+      this.point('y') = this.point('y') + b
+
+      this
     }
-    def distance(p:Point):Double = {
-      Math.sqrt(Math.pow((this.x - p.x), 2) + Math.pow((this.y - p.y),2))
-    }
+    def distance(that:Point):Double = Math.sqrt((Math.pow(this.point('x') - that.point('x'), 2) + Math.pow(this.point('y') - that.point('y'), 2)))
 
-    def invert():Point = Point(y, x)
+    def invert():Point = {
+      var temp:Int = this.point('x')
+      this.point('x') = this.point('y')
+      this.point('y') = temp
+      this
+    }
   }
 
-  var p1 = Point(2, 3)
-  var p2 = Point(3, 4)
+  var p1:Point = Point(Map('x'->2, 'y'->3))
+  var p2:Point = Point(Map('x'->3, 'y'->2))
 
-  var p:Point = p1.add(p2)
-  println("Atfer adding p1 and p2 : " + p)
+  var p:Point = p1 + p2
+  println("Add p1 and p2 \n" + p)
 
-  println("Before Move : " + p1)
-  p1 = p1.move(2 , 2)
-  println("After move : " + p1)
+  p.move(2,2)
+  println("Move point by 2 : " + p)
 
   println("Distance between p1 and p2 : " + p1.distance(p2))
 
-  println("Before invert : " + p1)
-  p1 = p1.invert()
-  println("After invert : " + p1)
+  println("Before invert p1 : " + p1)
+  p1.invert()
+  println("After invert p1 : " + p1)
 }
